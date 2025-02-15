@@ -6,6 +6,9 @@
 // Biblioteca gerada pelo arquivo .pio durante compilação.
 #include "ws2818b.pio.h"
 
+// Biblioteca que gera um array de elementos RGB contendo todos os sprites a serem configurados na matriz de led
+#include "const_piskel.h"
+
 // Definição do número de LEDs e pino.
 #define LED_COUNT 25
 #define LED_PIN 7
@@ -124,9 +127,14 @@ void set_sprite(int matriz[5][5][3])
 
 int main()
 {
-
     // Inicializa entradas e saídas.
     stdio_init_all();
+
+    // Matriz que receberá todos os sprites da Matriz de LEDs
+    uint32_t matriz[144][25][3];
+
+    // Armazena os sprites na matriz
+    converte_array(matriz);
 
     // Inicializa matriz de LEDs NeoPixel.
     npInit(LED_PIN);
@@ -139,27 +147,20 @@ int main()
     // Não faz mais nada. Loop infinito.
     while (true)
     {
-        int matriz[5][5][3] = {
-            {{0, 0, 0}, {255, 255, 0}, {255, 0, 255}, {255, 255, 0}, {0, 0, 0}},
-            {{255, 255, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {255, 255, 0}},
-            {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
-            {{255, 255, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {255, 255, 0}},
-            {{0, 0, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {0, 0, 0}}};
 
-        // Desenhando Sprite contido na matriz.c
-        set_sprite(matriz);
+        for (int i = 0; i < 12; i++) {
+            // Desenhando Sprite contido na matriz.c
+            set_sprite(matriz[i]);
 
-        // Faz a gravação da matriz para os leds
-        npWrite();
-
-        sleep_ms(1000);
-
-        // Limpa os dados gravados na matriz de led
-        npClear();
-
-        // Faz a gravação da matriz para os leds
-        npWrite();
-
-        sleep_ms(1000);
+            // Faz a gravação da matriz para os leds
+            npWrite();
+    
+            sleep_ms(1000);
+    
+            // Limpa os dados gravados na matriz de led
+            npClear();
+        }
     }
+
+    return 0;
 }
