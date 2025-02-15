@@ -82,9 +82,10 @@ void npWrite()
   // Escreve cada dado de 8-bits dos pixels em sequência no buffer da máquina PIO.
   for (uint i = 0; i < LED_COUNT; ++i)
   {
-    pio_sm_put_blocking(np_pio, sm, leds[i].G);
-    pio_sm_put_blocking(np_pio, sm, leds[i].R);
-    pio_sm_put_blocking(np_pio, sm, leds[i].B);
+    // Reduz o brilho dos LEDs a 80%
+    pio_sm_put_blocking(np_pio, sm, leds[i].G * 0.3);
+    pio_sm_put_blocking(np_pio, sm, leds[i].R * 0.3);
+    pio_sm_put_blocking(np_pio, sm, leds[i].B * 0.3);
   }
   sleep_us(100); // Espera 100us, sinal de RESET do datasheet.
 }
@@ -102,17 +103,6 @@ int getIndex(int x, int y)
   else
   {
     return 24 - (y * 5 + (4 - x)); // Linha ímpar (direita para esquerda).
-  }
-}
-
-/**
- * Ajusta o brilho dos LEDs.
- */
-void ajustarBrilho(float fator) {
-  for (int i = 0; i < LED_COUNT; i++) {
-      leds[i].R = (uint8_t)(leds[i].R * fator);
-      leds[i].G = (uint8_t)(leds[i].G * fator);
-      leds[i].B = (uint8_t)(leds[i].B * fator);
   }
 }
 
@@ -150,9 +140,6 @@ int main()
       }
     }
 
-    // Reduz o brilho para 50%
-    ajustarBrilho(0.5);
-
     // Faz a gravação da matriz para os leds
     npWrite();
 
@@ -160,6 +147,9 @@ int main()
 
     // Limpa os dados gravados na matriz de led
     npClear();
+
+    // Faz a gravação da matriz para os leds
+    npWrite();
 
     sleep_ms(1000);
   }
