@@ -11,7 +11,8 @@
 #define LED_PIN 7
 
 // Definição de pixel GRB
-struct pixel_t {
+struct pixel_t
+{
   uint8_t G, R, B; // Três valores de 8-bits compõem um pixel.
 };
 typedef struct pixel_t pixel_t;
@@ -27,7 +28,8 @@ uint sm;
 /**
  * Inicializa a máquina PIO para controle da matriz de LEDs.
  */
-void npInit(uint pin) {
+void npInit(uint pin)
+{
 
   // Cria programa PIO.
   uint offset = pio_add_program(pio0, &ws2818b_program);
@@ -35,7 +37,8 @@ void npInit(uint pin) {
 
   // Toma posse de uma máquina PIO.
   sm = pio_claim_unused_sm(np_pio, false);
-  if (sm < 0) {
+  if (sm < 0)
+  {
     np_pio = pio1;
     sm = pio_claim_unused_sm(np_pio, true); // Se nenhuma máquina estiver livre, panic!
   }
@@ -44,7 +47,8 @@ void npInit(uint pin) {
   ws2818b_program_init(np_pio, sm, offset, pin, 800000.f);
 
   // Limpa buffer de pixels.
-  for (uint i = 0; i < LED_COUNT; ++i) {
+  for (uint i = 0; i < LED_COUNT; ++i)
+  {
     leds[i].R = 0;
     leds[i].G = 0;
     leds[i].B = 0;
@@ -54,7 +58,8 @@ void npInit(uint pin) {
 /**
  * Atribui uma cor RGB a um LED.
  */
-void npSetLED(const uint index, const uint8_t r, const uint8_t g, const uint8_t b) {
+void npSetLED(const uint index, const uint8_t r, const uint8_t g, const uint8_t b)
+{
   leds[index].R = r;
   leds[index].G = g;
   leds[index].B = b;
@@ -63,7 +68,8 @@ void npSetLED(const uint index, const uint8_t r, const uint8_t g, const uint8_t 
 /**
  * Limpa o buffer de pixels.
  */
-void npClear() {
+void npClear()
+{
   for (uint i = 0; i < LED_COUNT; ++i)
     npSetLED(i, 0, 0, 0);
 }
@@ -71,9 +77,11 @@ void npClear() {
 /**
  * Escreve os dados do buffer nos LEDs.
  */
-void npWrite() {
+void npWrite()
+{
   // Escreve cada dado de 8-bits dos pixels em sequência no buffer da máquina PIO.
-  for (uint i = 0; i < LED_COUNT; ++i) {
+  for (uint i = 0; i < LED_COUNT; ++i)
+  {
     pio_sm_put_blocking(np_pio, sm, leds[i].G);
     pio_sm_put_blocking(np_pio, sm, leds[i].R);
     pio_sm_put_blocking(np_pio, sm, leds[i].B);
@@ -81,7 +89,24 @@ void npWrite() {
   sleep_us(100); // Espera 100us, sinal de RESET do datasheet.
 }
 
-int main() {
+// Modificado do github: https://github.com/BitDogLab/BitDogLab-C/tree/main/neopixel_pio
+// Função para converter a posição do matriz para uma posição do vetor.
+int getIndex(int x, int y)
+{
+  // Se a linha for par (0, 2, 4), percorremos da esquerda para a direita.
+  // Se a linha for ímpar (1, 3), percorremos da direita para a esquerda.
+  if (y % 2 == 0)
+  {
+    return 24 - (y * 5 + x); // Linha par (esquerda para direita).
+  }
+  else
+  {
+    return 24 - (y * 5 + (4 - x)); // Linha ímpar (direita para esquerda).
+  }
+}
+
+int main()
+{
 
   // Inicializa entradas e saídas.
   stdio_init_all();
@@ -95,7 +120,33 @@ int main() {
   npWrite(); // Escreve os dados nos LEDs.
 
   // Não faz mais nada. Loop infinito.
-  while (true) {
+  while (true)
+  {
+    int matriz[5][5][3] = {
+        {{0, 0, 0}, {255, 255, 0}, {255, 0, 255}, {255, 255, 0}, {0, 0, 0}},
+        {{255, 255, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {255, 255, 0}},
+        {{255, 255, 0}, {0, 0, 0}, {255, 255, 0}, {0, 0, 0}, {255, 255, 0}},
+        {{255, 255, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {255, 255, 0}},
+        {{0, 0, 0}, {255, 255, 0}, {255, 255, 0}, {255, 255, 0}, {0, 0, 0}}};
+
+    // Desenhando Sprite contido na matriz.c
+    for (int linha = 0; linha < 5; linha++)
+    {
+      for (int coluna = 0; coluna < 5; coluna++)
+      {
+        int posicao = getIndex(linha, coluna);
+        npSetLED(posicao, matriz[coluna][linha][0], matriz[coluna][linha][1], matriz[coluna][linha][2]);
+      }
+    }
+
+    // Faz a gravação da matriz para os leds
+    npWrite();
+
+    sleep_ms(1000);
+
+    // Limpa os dados gravados na matriz de led
+    npClear();
+    
     sleep_ms(1000);
   }
 }
