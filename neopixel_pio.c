@@ -105,6 +105,17 @@ int getIndex(int x, int y)
   }
 }
 
+/**
+ * Ajusta o brilho dos LEDs.
+ */
+void ajustarBrilho(float fator) {
+  for (int i = 0; i < LED_COUNT; i++) {
+      leds[i].R = (uint8_t)(leds[i].R * fator);
+      leds[i].G = (uint8_t)(leds[i].G * fator);
+      leds[i].B = (uint8_t)(leds[i].B * fator);
+  }
+}
+
 int main()
 {
 
@@ -139,6 +150,9 @@ int main()
       }
     }
 
+    // Reduz o brilho para 50%
+    ajustarBrilho(0.5);
+
     // Faz a gravação da matriz para os leds
     npWrite();
 
@@ -146,7 +160,7 @@ int main()
 
     // Limpa os dados gravados na matriz de led
     npClear();
-    
+
     sleep_ms(1000);
   }
 }
