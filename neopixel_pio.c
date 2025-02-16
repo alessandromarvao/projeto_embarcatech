@@ -85,13 +85,19 @@ void npWrite()
     // Escreve cada dado de 8-bits dos pixels em sequência no buffer da máquina PIO.
     for (uint i = 0; i < LED_COUNT; ++i)
     {
-        // Reduz o brilho dos LEDs a 80%
-        pio_sm_put_blocking(np_pio, sm, leds[i].G * 0.3);
-        pio_sm_put_blocking(np_pio, sm, leds[i].R * 0.3);
-        pio_sm_put_blocking(np_pio, sm, leds[i].B * 0.3);
+        // Aplica o brilho de 30% aos valores de cor antes de enviá-los.
+        uint8_t r = leds[i].R * 0.3;
+        uint8_t g = leds[i].G * 0.3;
+        uint8_t b = leds[i].B * 0.3;
+
+        // Envia os valores ajustados ao PIO
+        pio_sm_put_blocking(np_pio, sm, g);
+        pio_sm_put_blocking(np_pio, sm, r);
+        pio_sm_put_blocking(np_pio, sm, b);
     }
     sleep_us(100); // Espera 100us, sinal de RESET do datasheet.
 }
+
 
 // Modificado do github: https://github.com/BitDogLab/BitDogLab-C/tree/main/neopixel_pio
 // Função para converter a posição do matriz para uma posição do vetor.
@@ -134,7 +140,7 @@ int main()
     uint32_t matriz[144][25][3];
 
     // Armazena os sprites na matriz
-    converte_array(matriz);
+    convert_array(matriz);
 
     // Inicializa matriz de LEDs NeoPixel.
     npInit(LED_PIN);
