@@ -169,7 +169,7 @@ int main()
             // Faz a gravação da matriz para os leds
             npWrite();
     
-            sleep_ms(1000);
+            sleep_ms(300);
     
             // Limpa os dados gravados na matriz de led
             npClear();
