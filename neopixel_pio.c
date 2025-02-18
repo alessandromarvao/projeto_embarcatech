@@ -86,9 +86,9 @@ void npWrite()
     for (uint i = 0; i < LED_COUNT; ++i)
     {
         // Aplica o brilho de 30% aos valores de cor antes de enviá-los.
-        uint8_t r = leds[i].R * 0.3;
-        uint8_t g = leds[i].G * 0.3;
-        uint8_t b = leds[i].B * 0.3;
+        uint8_t r = leds[i].R * 0.66;
+        uint8_t g = leds[i].G * 0.66;
+        uint8_t b = leds[i].B * 0.66;
 
         // Envia os valores ajustados ao PIO
         pio_sm_put_blocking(np_pio, sm, g);
