@@ -277,7 +277,7 @@ void hexToRGB(unsigned int hex, int rgb[3])
 void convert_array(int array[35][25][3])
 {
     // Percorre todos os 42 elementos de sprites gerados
-    for (int i = 0; i < 42; i++)
+    for (int i = 0; i < 35; i++)
     {
         // Percorre toda a matriz de 25 elementos de cada sprite gerado
         for (int j = 0; j < 25; j++)

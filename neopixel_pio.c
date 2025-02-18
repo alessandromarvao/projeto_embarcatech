@@ -157,23 +157,25 @@ int main()
     // Aqui, você desenha nos LEDs.
 
     npWrite(); // Escreve os dados nos LEDs.
+    
+    // Executa a apresentação de LED apenas uma vez no código
+    for (int i = 0; i < 35; i++) {
+        // Desenhando Sprite contido na matriz.c
+        set_sprite(matriz[i]);
+
+        // Faz a gravação da matriz para os leds
+        npWrite();
+
+        sleep_ms(300);
+
+        // Limpa os dados gravados na matriz de led
+        npClear();
+    }
 
     // Não faz mais nada. Loop infinito.
     while (true)
     {
 
-        for (int i = 0; i < 35; i++) {
-            // Desenhando Sprite contido na matriz.c
-            set_sprite(matriz[i]);
-
-            // Faz a gravação da matriz para os leds
-            npWrite();
-    
-            sleep_ms(300);
-    
-            // Limpa os dados gravados na matriz de led
-            npClear();
-        }
     }
 
     return 0;
