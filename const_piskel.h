@@ -747,10 +747,10 @@ void hexToRGB(unsigned int hex, int rgb[3])
  * Armazena os dados das cores hexadecimais convertidas em RGB na array recebida por parâmetro
  * @param array Matriz que receberá os valores das cores do sprite gerado (são 144 vetores contendo 25 vetores, que contém um vetor com 3 elementos)
  */
-void convert_array(int array[144][25][3])
+void convert_array(int array[42][25][3])
 {
     // Percorre todos os 144 elementos de sprites gerados
-    for (int i = 0; i < 144; i++)
+    for (int i = 0; i < 42; i++)
     {
         // Percorre toda a matriz de 25 elementos de cada sprite gerado
         for (int j = 0; j < 25; j++)
