@@ -86,6 +86,13 @@ void npWrite()
     for (uint i = 0; i < LED_COUNT; ++i)
     {
         // Aplica o brilho de 30% aos valores de cor antes de enviá-los.
+        // 0.77
+        // 0.55 muito forte
+        // 0.33 forte
+        // 0.22 bonm  
+        // 0.66
+        // 0.44
+        // 0.88
         uint8_t r = leds[i].R * 0.66;
         uint8_t g = leds[i].G * 0.66;
         uint8_t b = leds[i].B * 0.66;
