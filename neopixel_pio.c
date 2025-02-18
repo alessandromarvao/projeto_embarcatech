@@ -7,7 +7,8 @@
 #include "ws2818b.pio.h"
 
 // Biblioteca que gera um array de elementos RGB contendo todos os sprites a serem configurados na matriz de led
-#include "const_piskel.h"
+// #include "const_piskel.h"
+#include "splash_screen.h"
 
 // Definição do número de LEDs e pino.
 #define LED_COUNT 25
@@ -161,7 +162,7 @@ int main()
     while (true)
     {
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 0; i < 35; i++) {
             // Desenhando Sprite contido na matriz.c
             set_sprite(matriz[i]);
 
