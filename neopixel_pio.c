@@ -145,7 +145,7 @@ int main()
     stdio_init_all();
 
     // Matriz que receberá todos os sprites da Matriz de LEDs
-    uint32_t matriz[42][25][3];
+    uint32_t matriz[35][25][3];
 
     // Armazena os sprites na matriz
     convert_array(matriz);
@@ -162,7 +162,7 @@ int main()
     while (true)
     {
 
-        for (int i = 0; i < 42; i++) {
+        for (int i = 0; i < 35; i++) {
             // Desenhando Sprite contido na matriz.c
             set_sprite(matriz[i]);
 
