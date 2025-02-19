@@ -50,6 +50,7 @@ target_include_directories(neopixel_pio PRIVATE
 target_link_libraries(neopixel_pio 
         hardware_pio
         hardware_clocks
+        hardware_timer
         pico_cyw43_arch_lwip_poll
         )
 

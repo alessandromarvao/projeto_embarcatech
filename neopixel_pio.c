@@ -2,6 +2,7 @@
 #include "pico/stdlib.h"
 #include "hardware/pio.h"
 #include "hardware/clocks.h"
+#include "hardware/timer.h"
 
 // Biblioteca gerada pelo arquivo .pio durante compilação.
 #include "ws2818b.pio.h"
@@ -13,6 +14,11 @@
 // Definição do número de LEDs e pino.
 #define LED_COUNT 25
 #define LED_PIN 7
+
+// Variável que informa se está no tempo de repouso
+bool rest = false;
+// Variável que informa se está no tempo de estudar (O contador começa com os 25 minutos para estudar e depois 5 minutos para repousar)
+bool study = true;
 
 // Definição de pixel GRB
 struct pixel_t
@@ -190,3 +196,5 @@ int main()
 }
 
 int64_t start_timer_callback(){}
+
+int64_t stop_timer_callback(){}
