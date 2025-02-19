@@ -8,17 +8,23 @@
 #include "ws2818b.pio.h"
 
 // Biblioteca que gera um array de elementos RGB contendo todos os sprites a serem configurados na matriz de led
-// #include "const_piskel.h"
 #include "sprites/splash_screen.h"
+#include "sprites/super_mario.h"
 
 // Definição do número de LEDs e pino.
 #define LED_COUNT 25
 #define LED_PIN 7
 
-// Variável que informa se está no tempo de repouso
+// Definição das GPIOs dos botões A e B
+#define BTN_A 5 // Quando apertado, inicia ou para o contador
+#define BTN_B 6 // Para o alarme
+
+// Variável que indica se está no tempo de repouso
 bool rest = false;
-// Variável que informa se está no tempo de estudar (O contador começa com os 25 minutos para estudar e depois 5 minutos para repousar)
+// Variável que indica se está no tempo de estudar (O contador começa com os 25 minutos para estudar e depois 5 minutos para repousar)
 bool study = true;
+// Variável que indica se o temporizador está ligado ou não
+bool timer_on = false;
 
 // Definição de pixel GRB
 struct pixel_t
@@ -144,9 +150,9 @@ void set_sprite(int matriz[5][5][3])
     }
 }
 
-// Função de interrupção gerada pela interação do usuário através de botões
-static void gpio_irq_handler(uint gpio, uint32_t events);
-
+/**
+ * Função que exibe os sprites de inicialização do sistema na matriz de LEDs
+ */
 void splash_screen()
 {
     // Matriz que receberá todos os sprites da Matriz de LEDs
@@ -177,24 +183,95 @@ void splash_screen()
         npClear();
     }
 
-    npWrite(); // Escreve os dados nos LEDs.
+    // Escreve os dados nos LEDs.
+    npWrite();
 }
+
+/**
+ * Função que exibe os sprites do Super Mario na matriz de LEDs
+ */
+void super_mario_sprite()
+{
+    // Matriz que receberá todos os sprites da Matriz de LEDs
+    uint32_t matriz[25][25][3];
+
+    // Armazena os sprites na matriz
+    splash_screen_array(matriz);
+
+    // Inicializa matriz de LEDs NeoPixel.
+    npInit(LED_PIN);
+
+    npClear();
+
+    // Aqui, você desenha nos LEDs.
+
+    // Executa a apresentação de LED do splash screen apenas uma vez no código
+    for (int i = 0; i < 25; i++)
+    {
+        // Desenhando Sprite contido na matriz.c
+        set_sprite(matriz[i]);
+
+        // Faz a gravação da matriz para os leds
+        npWrite();
+
+        // Tempo para cada apresentação dos sprites (padrão de 1 minuto para cada = total de 25 minutos)
+        sleep_ms(2000);
+    }
+
+    // Limpa os dados gravados na matriz de led
+    npClear();
+
+    // Escreve os dados nos LEDs.
+    npWrite();
+}
+
+// Função de interrupção gerada pela interação do usuário através de botões
+static void timer_callback(uint gpio, uint32_t events);
 
 int main()
 {
     // Inicializa entradas e saídas.
     stdio_init_all();
 
+    // Inicializa e configura o botão A como resistor de pull-up
+    gpio_init(BTN_A);
+    gpio_set_dir(BTN_A, GPIO_IN);
+    gpio_pull_up(BTN_A);
+
+    // Inicializa e configura o botão B como resistor de pull-up
+    gpio_init(BTN_B);
+    gpio_set_dir(BTN_B, GPIO_IN);
+    gpio_pull_up(BTN_B);
+
     splash_screen();
+
+    gpio_set_irq_enabled_with_callback(BTN_A, GPIO_IRQ_EDGE_FALL, true, &timer_callback);
 
     // Não faz mais nada. Loop infinito.
     while (true)
     {
+        sleep_ms(100);
     }
 
     return 0;
 }
 
-int64_t start_timer_callback(){}
+void timer_callback(uint gpio, uint32_t events)
+{
+    // Verifica se o botão foi pressionado e o temporizador está desligado
+    if (gpio_get(BTN_A) == 0 && !timer_on)
+    {
+        sleep_ms(50);
+        // Indica que o temporizador foi ligado
+        timer_on = true;
 
-int64_t stop_timer_callback(){}
+        // Inicia o temporizador
+        super_mario_sprite();
+    }
+    // Verifica se o botão foi pressionado e o temporizador está ligado
+    else if (gpio_get(BTN_A) == 0 && timer_on)
+    {
+    }
+}
+
+int64_t stop_timer_callback() {}
