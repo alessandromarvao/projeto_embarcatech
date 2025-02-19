@@ -8,7 +8,7 @@
 
 // Biblioteca que gera um array de elementos RGB contendo todos os sprites a serem configurados na matriz de led
 // #include "const_piskel.h"
-#include "splash_screen.h"
+#include "sprites/splash_screen.h"
 
 // Definição do número de LEDs e pino.
 #define LED_COUNT 25
@@ -90,7 +90,7 @@ void npWrite()
         // 0.77
         // 0.55 muito forte
         // 0.33 forte
-        // 0.22 bonm  
+        // 0.22 bonm
         // 0.66
         // 0.44
         // 0.88
@@ -105,7 +105,6 @@ void npWrite()
     }
     sleep_us(100); // Espera 100us, sinal de RESET do datasheet.
 }
-
 
 // Modificado do github: https://github.com/BitDogLab/BitDogLab-C/tree/main/neopixel_pio
 // Função para converter a posição do matriz para uma posição do vetor.
@@ -139,27 +138,27 @@ void set_sprite(int matriz[5][5][3])
     }
 }
 
-int main()
-{
-    // Inicializa entradas e saídas.
-    stdio_init_all();
+// Função de interrupção gerada pela interação do usuário através de botões
+static void gpio_irq_handler(uint gpio, uint32_t events);
 
+void splash_screen()
+{
     // Matriz que receberá todos os sprites da Matriz de LEDs
     uint32_t matriz[35][25][3];
 
     // Armazena os sprites na matriz
-    convert_array(matriz);
+    splash_screen_array(matriz);
 
     // Inicializa matriz de LEDs NeoPixel.
     npInit(LED_PIN);
+
     npClear();
 
     // Aqui, você desenha nos LEDs.
 
-    npWrite(); // Escreve os dados nos LEDs.
-    
-    // Executa a apresentação de LED apenas uma vez no código
-    for (int i = 0; i < 35; i++) {
+    // Executa a apresentação de LED do splash screen apenas uma vez no código
+    for (int i = 0; i < 35; i++)
+    {
         // Desenhando Sprite contido na matriz.c
         set_sprite(matriz[i]);
 
@@ -172,11 +171,22 @@ int main()
         npClear();
     }
 
+    npWrite(); // Escreve os dados nos LEDs.
+}
+
+int main()
+{
+    // Inicializa entradas e saídas.
+    stdio_init_all();
+
+    splash_screen();
+
     // Não faz mais nada. Loop infinito.
     while (true)
     {
-
     }
 
     return 0;
 }
+
+int64_t start_timer_callback(){}
